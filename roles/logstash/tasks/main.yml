@@ -1,0 +1,44 @@
+# Add Logstash apt key
+
+- name: Add Logstash apt key
+  apt_key:
+   url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+   state: present
+
+# Add the Logstash apt repo. For versions 6 of the stack - use '6.x-prerelease':
+
+- name: Adding Logstash repo
+  apt_repository:
+   repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+   state: present
+
+# Installing Logstash
+
+- name: Install Logstash
+  apt:
+   name: logstash
+   update_cache: yes
+
+
+# Adding Logstash configurations
+- name: Apply logstash Template
+  template:
+    src: templates/logstash-filter.conf
+    dest: /etc/logstash/conf.d/logstash-filter.conf
+
+
+# Start Logstash
+- name: Starting Logstash
+  service:
+   name: logstash
+   state: started
+
+# Enable Logstash
+- name: Enable Logstash service
+  systemd:
+    name: logstash.service
+    enabled: true
+    masked: no
+
+- name: Logstash data sync command
+  shell: "(/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/logstash-filter.conf  >/dev/null 2>&1 &)"
