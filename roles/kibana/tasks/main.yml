@@ -1,0 +1,69 @@
+# Add Kibana apt key
+
+- name: Add Kibana apt key
+  apt_key:
+   url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+   state: present
+
+# Add the Kibana apt repo. For versions 6 of the stack - use '6.x-prerelease':
+
+- name: Adding Kibana repo
+  apt_repository:
+   repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+   state: present
+
+# Installing Kibana
+
+- name: Install Kibana
+  apt:
+   name: kibana
+   update_cache: yes
+
+# Update Kibana config file to allow access (to secure Kibana, bind to 'localhost').
+
+- name: Updating the config file to allow outside access
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'server.host:'
+   line: 'server.host: 0.0.0.0'
+
+# Update Kibana port in config file
+
+- name: Updating the port in config file
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'server.port:'
+   line: 'server.port: 5601'
+
+###################PublicIP#########
+- name: Get my public IP
+  ipify_facts:
+
+- debug: var=ipify_public_ip
+####################################
+#####Adil entry#####
+- name: elasticsearch.hosts
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'elasticsearch.hosts:'
+   line: 'elasticsearch.hosts: "http://localhost:9200"'
+####################
+# Start Kibana
+- name: Starting Kibana
+  service:
+   name: kibana
+   state: started
+
+# Enable Kibana
+- name: Enable Kibana service
+  systemd:
+    name: kibana.service
+    enabled: true
+    masked: no
+
+#- name: Start these services
+#  systemd:
+#    name: "{{ item }}"
+#    state: started
+#  with_items:
+#    - kibana

@@ -1,0 +1,10 @@
+cluster.name: es-cluster
+node.name: "elasticsearch-01"
+node.master: true
+node.data: true
+network.host: 0.0.0.0
+discovery.seed_hosts: ["10.114.0.2"]
+
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+
