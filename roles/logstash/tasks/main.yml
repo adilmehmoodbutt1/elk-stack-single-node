@@ -83,16 +83,12 @@
    name: logstash_push.service
    state: started
 
-# Curl command to create index
+#
+# Example from Ansible Playbooks
+- name: Apply logstash Template
+  template:
+    src: templates/create_index.sh
+    dest: /etc/logstash/create_index.sh
 
-tasks:
-- name: post to consul
-  uri:
-    url: http://localhost:9200/.kibana/_doc/index-pattern:logstash
-    method: POST
-    type: "index-pattern",
-    title: "logstash*",
-    timeFieldName: "execution_time",
-    body_format: json,
-    headers:
-      Content-Type: "application/json"
+- name: Run a script using an executable in a non-system path
+  shell: /bin/bash /etc/logstash/create_index.sh
