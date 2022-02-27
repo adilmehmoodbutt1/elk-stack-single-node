@@ -1,0 +1,9 @@
+[Unit]
+Description=logstash_push
+
+[Service]
+ExecStart=/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/logstash-filter.conf
+
+[Install]
+WantedBy=multi-user.target
+

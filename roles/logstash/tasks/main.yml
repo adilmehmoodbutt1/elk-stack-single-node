@@ -12,6 +12,26 @@
    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
    state: present
 
+# Installing Apache2 for logs collection
+
+- name: Install Apache2
+  apt:
+   name: apache2
+   update_cache: yes
+
+# Start Apache2
+- name: Starting Logstash
+  service:
+   name: apache2
+   state: started
+
+# Enable Apache2
+- name: Enable Apache2 service
+  systemd:
+    name: apache2.service
+    enabled: true
+    masked: no
+
 # Installing Logstash
 
 - name: Install Logstash
@@ -42,3 +62,37 @@
 
 - name: Logstash data sync command
   shell: "(/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/logstash-filter.conf  >/dev/null 2>&1 &)"
+
+#
+# Adding Logstash Datapush configurations
+- name: Apply logstash Template
+  template:
+    src: templates/logstash_push.service
+    dest: /lib/systemd/system/logstash_push.service
+
+# Enable Logstash DataPush service
+- name: Enable Logstash service
+  systemd:
+    name: logstash_push.service
+    enabled: true
+    masked: no
+
+# Start Logstash Datapush
+- name: Starting Logstash
+  service:
+   name: logstash_push.service
+   state: started
+
+# Curl command to create index
+
+tasks:
+- name: post to consul
+  uri:
+    url: http://localhost:9200/.kibana/_doc/index-pattern:logstash
+    method: POST
+    type: "index-pattern",
+    title: "logstash*",
+    timeFieldName: "execution_time",
+    body_format: json,
+    headers:
+      Content-Type: "application/json"
