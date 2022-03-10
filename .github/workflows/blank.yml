@@ -23,4 +23,4 @@ jobs:
           key: ${{ secrets.PRI_KEY }} 
                     
           script:
-             sudo cp -r github-pipeline-deploy-static-website-ubuntu/index.html /var/www/html/site2/
+             sudo cp -r elk-stack-single-node/README.md /var/www/html/site2/
