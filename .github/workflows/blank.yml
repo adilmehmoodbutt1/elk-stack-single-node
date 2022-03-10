@@ -1,7 +1,7 @@
 name: Build & Deploy
 on:  
   push:
-    branches: [ main ]
+    branches: [ site2 ]
 jobs:  
   deploy:
     # The type of runner that the job will run on
@@ -23,4 +23,4 @@ jobs:
           key: ${{ secrets.PRI_KEY }} 
                     
           script:
-             sudo cp -r github-pipeline-deploy-static-website-ubuntu/index.html /var/www/site1/
+             sudo cp -r github-pipeline-deploy-static-website-ubuntu/index.html /var/www/site2/
