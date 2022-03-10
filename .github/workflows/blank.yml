@@ -23,4 +23,5 @@ jobs:
           key: ${{ secrets.PRI_KEY }} 
                     
           script:
-             sudo git pull && sudo cp -r elk-stack-single-node/README.md /var/www/html/site1/
+             /usr/bin/git pull 
+             sudo cp -r elk-stack-single-node/README.md /var/www/html/site1/
